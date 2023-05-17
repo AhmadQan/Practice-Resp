@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import LoginPage from "./pages/LoginPage";
+
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PostsPage from "./pages/PostsPage";
+
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    const storedIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const lastLoginTime = localStorage.getItem("lastLoginTime");
+
+    if (storedIsLoggedIn && lastLoginTime) {
+      const currentTime = new Date().getTime();
+      const timeDifference = currentTime - Number(lastLoginTime);
+      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours
+
+      if (timeDifference > twentyFourHours) {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("username");
+        localStorage.removeItem("lastLoginTime");
+      }
+    }
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter className="App">
+      <header></header>
+      <main>
+        <Routes>
+          <Route path="/" element={<LoginPage />}></Route>
+          <Route path="/posts" element={<PostsPage />}></Route>
+        </Routes>
+      </main>
+    </BrowserRouter>
   );
 }
 
